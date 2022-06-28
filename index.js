@@ -41,8 +41,25 @@ async function run() {
             const id = req.params.id;
             const query = { _id:ObjectId(id) };
             const product = await productsCollection.findOne(query);
-            console.log(product);
+            // console.log(product);
             res.json(product);
+        })
+
+        // UPDATE API
+        app.put('/products/:id', async(req, res) => {
+            const id = req.params.id;
+            const updatedProduct = req.body;
+            const filter = { _id:ObjectId(id) };
+            const options = { upsert: true };
+            const updateDoc = {
+                $set: {
+                  name: updatedProduct.name,
+                  price: updatedProduct.price,
+                  quantity: updatedProduct.quantity
+                },
+            };
+            const result = await productsCollection.updateOne(filter, updateDoc, options);
+            res.json(result);
         })
 
         // DELETE API
@@ -51,7 +68,7 @@ async function run() {
             // console.log(id);
             const query = { _id:ObjectId(id) };
             const result = await productsCollection.deleteOne(query);
-            console.log("deleted successfully", result);
+            // console.log("deleted successfully", result);
             res.json(result);
         })
     } finally {
